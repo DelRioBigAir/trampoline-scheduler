@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Employees</title>
+</head>
+<body>
+
+<h2>Admin – Add Employee</h2>
+
+<form action="/admin/add_employee" method="post">
+
+    Name:<br>
+    <input type="text" name="name" required><br><br>
+
+    Max Weekly Hours:<br>
+    <input type="number" name="max_hours" required><br><br>
+
+    Roles (Hold CTRL to select multiple):<br>
+    <select name="roles" multiple size="8" required>
+        <option value="Manager">Manager</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Cashier">Cashier</option>
+        <option value="Lead Cashier">Lead Cashier</option>
+        <option value="Court Monitor">Court Monitor</option>
+        <option value="Lead Court Monitor">Lead Court Monitor</option>
+        <option value="Party Host">Party Host</option>
+        <option value="Event Lead">Event Lead</option>
+        <option value="Reception">Reception</option>
+        <option value="Big Eats Cashier">Big Eats Cashier</option>
+        <option value="Big Eats Cashier Lead">Big Eats Cashier Lead</option>
+        <option value="Kitchen">Kitchen</option>
+        <option value="Kitchen Lead">Kitchen Lead</option>
+        <option value="Cleaning">Cleaning</option>
+    </select>
+
+    <br><br>
+    <button type="submit">Add Employee</button>
+
+</form>
+
+<hr>
+
+<h3>Current Employees</h3>
+
+{% for emp in employees %}
+    {{ emp[1] }}<br>
+{% endfor %}
+
+<br><br>
+<a href="/dashboard">Back to Dashboard</a>
+
+</body>
+</html>

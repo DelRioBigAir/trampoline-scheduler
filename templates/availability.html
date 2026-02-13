@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Base Availability</title>
+</head>
+<body>
+
+<h1>Base (Recurring) Availability</h1>
+
+<h2>Add Recurring Availability</h2>
+
+<form action="/add_base_availability" method="post">
+
+    <label>Employee:</label><br>
+    <select name="employee_id" required>
+        {% for emp in employees %}
+            <option value="{{ emp[0] }}">{{ emp[1] }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label>Day:</label><br>
+    <select name="day">
+        <option>Monday</option>
+        <option>Tuesday</option>
+        <option>Wednesday</option>
+        <option>Thursday</option>
+        <option>Friday</option>
+        <option>Saturday</option>
+        <option>Sunday</option>
+    </select>
+    <br><br>
+
+    <label>Start Time:</label><br>
+    <input type="time" name="start" required>
+    <br><br>
+
+    <label>End Time:</label><br>
+    <input type="time" name="end" required>
+    <br><br>
+
+    <button type="submit">Add Availability</button>
+
+</form>
+
+<br><br>
+<a href="/">Back to Dashboard</a>
+
+</body>
+</html>
