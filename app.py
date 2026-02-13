@@ -1,11 +1,22 @@
-
 from flask import Flask, render_template, redirect, request, session
 import scheduler
+import os
 
 app = Flask(__name__)
-app.secret_key = "super_secret_key"
+
+# Use environment variable for secret key (important for production)
+app.secret_key = os.environ.get("SECRET_KEY", "fallback_dev_key")
 
 scheduler.setup_database()
+
+
+# =============================
+# ROOT ROUTE
+# =============================
+
+@app.route("/")
+def home():
+    return redirect("/login")
 
 
 # =============================
@@ -44,6 +55,10 @@ def login():
     return render_template("login.html")
 
 
+# =============================
+# LOGOUT
+# =============================
+
 @app.route("/logout")
 def logout():
     session.clear()
@@ -51,7 +66,7 @@ def logout():
 
 
 # =============================
-# CHANGE PASSWORD
+# FORCE PASSWORD CHANGE
 # =============================
 
 @app.route("/change_password", methods=["GET", "POST"])
@@ -80,7 +95,7 @@ def dashboard():
 
 
 # =============================
-# ADMIN PANEL
+# ADMIN USER MANAGEMENT
 # =============================
 
 @app.route("/admin/users")
@@ -101,5 +116,9 @@ def admin_reset_password(user_id):
     return redirect("/admin/users")
 
 
+# =============================
+# RUN APP
+# =============================
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
