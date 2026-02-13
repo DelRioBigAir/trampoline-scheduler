@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, redirect, request, session
 import scheduler
 import os
@@ -19,22 +20,21 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        user = scheduler.get_user(username)
+        user = scheduler.get_connection().cursor().execute(
+            "SELECT * FROM users WHERE username = %s", (username,)
+        )
+
+        user = scheduler.get_connection().cursor().fetchone()
 
         if not user:
             return "Invalid login"
 
-        # Safely check locked column (index 7 now)
-        if len(user) > 7 and user[7] == 1:
-            return "Account locked. Contact admin."
+        if user[7] == 1:
+            return "Account locked."
 
         if scheduler.verify_password(password, user[2]):
             session["user_id"] = user[0]
             session["role"] = user[4]
-
-            if user[5] == 1:
-                return redirect("/change_password")
-
             return redirect("/dashboard")
 
         return "Invalid login"
@@ -42,25 +42,39 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/change_password", methods=["GET", "POST"])
-def change_password():
-    if "user_id" not in session:
-        return redirect("/login")
-
-    if request.method == "POST":
-        new_password = request.form["new_password"]
-        scheduler.update_password(session["user_id"], new_password)
-        return redirect("/dashboard")
-
-    return render_template("change_password.html")
-
-
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
         return redirect("/login")
 
-    return "Dashboard Loaded Successfully"
+    employees = scheduler.get_all_employees()
+    users = scheduler.get_all_users()
+
+    return render_template("admin_dashboard.html",
+                           employees=employees,
+                           users=users)
+
+
+@app.route("/add_employee", methods=["POST"])
+def add_employee():
+    name = request.form["name"]
+    max_hours = request.form["max_hours"]
+    roles = request.form.getlist("roles")
+
+    scheduler.add_employee(name, max_hours, roles)
+    return redirect("/dashboard")
+
+
+@app.route("/deactivate/<int:employee_id>")
+def deactivate(employee_id):
+    scheduler.deactivate_employee(employee_id)
+    return redirect("/dashboard")
+
+
+@app.route("/reset_password/<int:user_id>")
+def reset_password(user_id):
+    scheduler.reset_user_password(user_id)
+    return redirect("/dashboard")
 
 
 if __name__ == "__main__":

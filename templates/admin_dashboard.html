@@ -1,0 +1,42 @@
+<h2>Employee Management</h2>
+
+<h3>Add Employee</h3>
+<form method="post" action="/add_employee">
+    Name: <input type="text" name="name" required><br><br>
+    Max Hours: <input type="number" name="max_hours" required><br><br>
+
+    Roles (hold CTRL for multiple):
+    <select name="roles" multiple size="6">
+        <option value="Manager">Manager</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Cashier">Cashier</option>
+        <option value="Court Monitor">Court Monitor</option>
+        <option value="Party Host">Party Host</option>
+        <option value="Kitchen">Kitchen</option>
+    </select><br><br>
+
+    <button type="submit">Add Employee</button>
+</form>
+
+<hr>
+
+<h3>Employees</h3>
+{% for e in employees %}
+    {{ e[1] }} (Max: {{ e[2] }})
+    {% if e[3] %}
+        - Active
+    {% else %}
+        - Inactive
+    {% endif %}
+    <a href="/deactivate/{{ e[0] }}">Deactivate</a>
+    <br>
+{% endfor %}
+
+<hr>
+
+<h3>Users</h3>
+{% for u in users %}
+    {{ u[1] }} ({{ u[2] }})
+    <a href="/reset_password/{{ u[0] }}">Reset Password</a>
+    <br>
+{% endfor %}
